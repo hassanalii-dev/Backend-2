@@ -9,14 +9,14 @@ let products = [
         id: 1,
         name: "Gaming PC",
         price: 50000,
-        imageurl: "gaming-pc.jpg",
+        imageurl: "https://th.bing.com/th/id/OIP.zSox3lDLqSkiL3S2rU3kHgHaEQ?r=0&o=7rm=3&rs=1&pid=ImgDetMain&o=7&rm=3",
         desc: "A powerful gaming PC"
     },
     {
         id: 2,
         name: "Gaming Keyboard",
         price: 5000,
-        imageurl: "gaming-keyboard.jpg",
+        imageurl: "https://www.howtogeek.com/wp-content/uploads/2022/04/rgb-lit-gaming-mechanical-keyboard.jpg?width=1198&trim=1,1&bg-color=000&pad=1,1",
         desc: "A mechanical gaming keyboard"
     }
 ]
