@@ -1,15 +1,33 @@
 import express from "express"
 import cors from "cors"
+import mongoose from "mongoose"
+import dotenv from "dotenv"
+
+dotenv.config()
 
 const app = express()
 
+import dns from "node:dns/promises"
+dns.setServers(["1.1.1.1", "8.8.8.8"])
+
 app.use(express.json())
+
+async function ConnectDB() {
+    try {
+        await mongoose.connect(process.env.MONOGODB_URI)
+        console.log("MongoDB Connected")
+    } catch (error) {
+        console.error("MongoDB Connection Error:", error)
+    }
+}
+
+ConnectDB()
 
 app.use(
     cors({
         origin: ["http://localhost:5173"],
-        methods: ["GET","POST","PUT","DELETE"],
-}),
+        methods: ["GET", "POST", "PUT", "DELETE"],
+    }),
 )
 
 let products = [
