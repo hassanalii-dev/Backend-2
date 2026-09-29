@@ -1,3 +1,4 @@
+import Product from "./model/Product.js"
 import express from "express"
 import cors from "cors"
 import mongoose from "mongoose"
@@ -30,65 +31,49 @@ app.use(
     }),
 )
 
-let products = [
-    {
-        id: 1,
-        name: "Gaming PC",
-        price: 50000,
-        imageurl: "https://tse1.mm.bing.net/th/id/OIP.zSox3lDLqSkiL3S2rU3kHgHaEQ?r=0&rs=1&pid=ImgDetMain&o=7&rm=3",
-        desc: "A powerful gaming PC"
-    },
-    {
-        id: 2,
-        name: "Gaming Keyboard",
-        price: 5000,
-        imageurl: "https://www.howtogeek.com/wp-content/uploads/2022/04/rgb-lit-gaming-mechanical-keyboard.jpg?width=1198&trim=1,1&bg-color=000&pad=1,1",
-        desc: "A mechanical gaming keyboard"
-    }
-]
-
-app.get("/products", (req, res) => {
-    res.json(products)
-})
-
-app.post("/products", (req, res) => {
-    const newProduct = req.body
-
-    products.push(newProduct)
-
-    res.status(201).json(newProduct)
-})
-
-app.put("/products/:id", (req, res) => {
-    const { id } = req.params
-    const updatedProduct = req.body
-
-    const index = products.findIndex(
-        (product) => product.id === parseInt(id)
-    )
-
-    if (index !== -1) {
-        products[index] = {
-            ...products[index],
-            ...updatedProduct
-        }
-
-        res.json(products[index])
-    } else {
-        res.status(404).json({
-            message: "Product not found"
-        })
+app.get("/products", async (req, res) => {
+    try {
+        const products = await Product.find()
+        res.json(products)
+    } catch (error) {
+        res.status(500).json({message: "Error fetching products"})
     }
 })
 
-app.delete("/products/:id", (req, res) => {
+app.post("/products", async (req, res) => {
+    try {
+        const newProductFields = req.body
+        const newProduct = new Product(newProductFields)
+        await newProduct.save()
+        res.status(201).json(newProduct)
+    } catch (error) {
+        res.status(500).json({message: "Error creating product", error: error})
+    }
+})
+
+app.put("/products/:id", async (req, res) => {
+    try {
     const { id } = req.params
-
-    products = products.filter(
-        (product) => product.id !== parseInt(id)
+    const updatedProductFields = req.body
+    const updatedProduct = await Product.findOneAndUpdate(
+        {id},
+        updatedProductFields,
+        {new: true},
     )
+    res.json(updatedProduct)
+    } catch (error) {
+        res.status(500).json({message: "Error updating product"})
+    }
+})
 
+app.delete("/products/:id", async (req, res) => {
+    try {
+    const { id } = req.params
+    await Product.findOneAndDelete({id:id})
     res.status(204).send()
+    } catch (error) {
+        res.status(500).json({message: "Error deleting product"})
+    }
 })
 
 app.listen(5050, () => {
